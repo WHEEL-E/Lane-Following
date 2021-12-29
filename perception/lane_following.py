@@ -20,16 +20,18 @@ def main():
         upper = np.array([h_max, s_max, v_max])
         lower = np.array([h_min, s_min, v_min])
 
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(frame, lower, upper)
-        result = cv2.bitwise_and(frame, frame, mask=mask)
+        frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        points = [[w_top, h_top], [w - w_bot, h_top], [w_bot, h_bot], [w - w_bot, h_bot]]
+        points = [[w_top, h_top], [w - w_top, h_top], [w_bot, h_bot], [w - w_bot, h_bot]]
 
-        warp_frame = utils.get_warp(frame, points, w, h)
+        frame_warp = utils.get_warp(frame_hsv, points, w, h)
+        warp_points = utils.warp_helper(frame_hsv, points)
 
+        mask = cv2.inRange(frame_warp, lower, upper)
+        result = cv2.bitwise_and(frame_warp, frame_warp, mask=mask)
+        
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        stack = np.hstack([frame, result, warp_frame])
+        stack = np.hstack([frame_hsv, result, frame_warp])
         cv2.imshow('stack', stack)
 
         if cv2.waitKey(1) & 0xFF == 27:

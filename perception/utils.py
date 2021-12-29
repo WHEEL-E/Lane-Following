@@ -14,8 +14,8 @@ def create_trackbar(w, h):
     cv2.createTrackbar('v_min', 'Setting parameters', 0, 255, empty)
     cv2.createTrackbar('v_max', 'Setting parameters', 0, 255, empty)
     cv2.createTrackbar('w_top', 'Setting parameters', 0, w//2, empty)
-    cv2.createTrackbar('w_bot', 'Setting parameters', 0, w//2, empty)
     cv2.createTrackbar('h_top', 'Setting parameters', 0, h, empty)
+    cv2.createTrackbar('w_bot', 'Setting parameters', 0, w//2, empty)
     cv2.createTrackbar('h_bot', 'Setting parameters', 0, h, empty)
 
 def get_trackbar():
@@ -39,5 +39,7 @@ def get_warp(frame, points, w, h):
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
     return cv2.warpPerspective(frame, matrix, (w, h))
 
-def warp_helper():
-    pass
+def warp_helper(frame, points):
+    for x in range(4):
+        cv2.circle(frame, (points[x][0], points[x][1]), 15, (0, 0, 255), cv2.FILLED)
+    return frame
