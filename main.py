@@ -1,4 +1,4 @@
-import Control.control as control
+import control.control as control
 
 def main():
     pass
