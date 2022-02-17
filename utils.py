@@ -99,7 +99,7 @@ def region_of_interest(frame, a=0.917, b=0.57, c=0.125, d=0.43, h=0.62):
     vertices = [np.array([bot_left, top_left, top_right, bot_right])]
 
     mask = np.zeros_like(frame)
-    cv2.fillPoly(mask, vertices, 255)
+    cv2.fillPoly(mask, vertices, color=(255, 0, 255))
 
     return cv2.bitwise_and(frame, mask)
 
