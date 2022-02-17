@@ -88,7 +88,23 @@ def warp_helper(frame, points):
     return frame
 
 
-def get_curve(frame, percent, region, preview=True):
+def region_of_interest(frame, a=0.917, b=0.57, c=0.125, d=0.43, h=0.62):
+    """
+    Get region of interest from the frame
+    """
+    bot_right = np.array([frame.shape[1] * a, frame.shape[0]], dtype='int')
+    top_right = np.array([frame.shape[1] * b, frame.shape[0] * h], dtype='int')
+    bot_left = np.array([frame.shape[1] * c, frame.shape[0]], dtype='int')
+    top_left = np.array([frame.shape[1] * d, frame.shape[0] * h], dtype='int')
+    vertices = [np.array([bot_left, top_left, top_right, bot_right])]
+
+    mask = np.zeros_like(frame)
+    cv2.fillPoly(mask, vertices, 255)
+
+    return cv2.bitwise_and(frame, mask)
+
+
+def get_histogram(frame, percent, region):
     """
     Get histogram of an image
     """
@@ -99,14 +115,22 @@ def get_curve(frame, percent, region, preview=True):
     index = np.where(hist_values >= min_values)
     base_point = int(np.average(index))
 
-    if preview:
-        hist_img = np.zeros(
-            (frame.shape[0], frame.shape[1], 3), dtype=np.uint8)
-        for x, intenisty in enumerate(hist_values):
-            cv2.line(
-                hist_img, (x, frame.shape[0]), (x, frame.shape[0] - intenisty//255//region), (0, 0, 255), 1)
-            cv2.circle(
-                hist_img, (base_point, frame.shape[0]), 8, (0, 255, 255), cv2.FILLED)
-        return base_point, hist_img
+    hist_img = np.zeros((frame.shape[0], frame.shape[1], 3), dtype=np.uint8)
+    for x, intenisty in enumerate(hist_values):
+        cv2.line(
+            hist_img, (x, frame.shape[0]), (x, frame.shape[0] - intenisty//255//region), (0, 0, 255), 1)
+        cv2.circle(
+            hist_img, (base_point, frame.shape[0]), 8, (0, 255, 255), cv2.FILLED)
+    return base_point, hist_img
 
-    return base_point
+
+def no_lane(frame, max=8):
+    """
+    Check if there is no lane in the frame
+    """
+    hist_values = np.sum(frame, axis=0)
+    max_values = round(0.001*np.max(hist_values))
+
+    if max_values < max:
+        return True
+    return False
