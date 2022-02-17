@@ -30,14 +30,16 @@ def main(src=0, preview=False):
         result = cv2.bitwise_and(frame_warp, frame_warp, mask=mask)
         utils.warp_helper(frame_hsv, points)
 
-        base_point, hist_img = utils.get_histogram(mask, 0.5, 5)
+        base_point, hist_img = utils.get_histogram(mask, 0.5, 8)
         curve_value = base_point - w//2
 
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
         ros = utils.region_of_interest(mask)
 
+        result = cv2.cvtColor(result, cv2.COLOR_HSV2BGR)
+
         if preview:
-            stack = np.hstack([ros, mask, hist_img])
+            stack = np.hstack([ros, result, hist_img])
             cv2.imshow('stack', stack)
 
         no_lane = utils.no_lane(ros)
