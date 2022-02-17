@@ -1,5 +1,4 @@
 import keyboard_control
-import bluetooth_control
 import lane_follower
 
 
@@ -14,9 +13,9 @@ def select_mode(mode):
     if mode == 0:
         keyboard_control.main()
     elif mode == 1:
-        bluetooth_control.main()
+        pass
     elif mode == 2:
-        lane_follower.main()
+        lane_follower.main(preview=True)
     elif mode == 3:
         pass
 
