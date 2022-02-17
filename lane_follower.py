@@ -34,15 +34,15 @@ def main(src=0, preview=False):
         curve_value = base_point - w//2
 
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        ros = utils.region_of_interest(mask)
+        roi = utils.region_of_interest(mask)
 
         result = cv2.cvtColor(result, cv2.COLOR_HSV2BGR)
 
         if preview:
-            stack = np.hstack([ros, result, hist_img])
+            stack = np.hstack([roi, result, hist_img])
             cv2.imshow('stack', stack)
 
-        no_lane = utils.no_lane(ros)
+        no_lane = utils.no_lane(roi)
 
         if no_lane:
             control.stop()
