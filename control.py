@@ -1,14 +1,14 @@
-def forward(speed):
+def forward(speed=0.5):
     print('w')
 
-def left(speed):
+def left(speed=0.5):
     print('a')
 
-def backward(speed):
+def backward(speed=0.5):
     print('s')
 
-def right(speed):
+def right(speed=0.5):
     print('d')
 
-def stop(speed):
+def stop():
     print('o')
