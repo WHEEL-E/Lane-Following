@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
-import utils
+
 import control
+import utils
 
 
 def main(src=0, preview=False):
@@ -17,12 +18,27 @@ def main(src=0, preview=False):
 
         frame = cv2.resize(frame, (w, h))
 
-        h_min, h_max, s_min, s_max, v_min, v_max, w_top, w_bot, h_top, h_bot = utils.get_trackbar()
+        (
+            h_min,
+            h_max,
+            s_min,
+            s_max,
+            v_min,
+            v_max,
+            w_top,
+            w_bot,
+            h_top,
+            h_bot,
+        ) = utils.get_trackbar()
 
         lower = np.array([h_min, s_min, v_min])
         upper = np.array([h_max, s_max, v_max])
-        points = [[w_top, h_top], [w - w_top, h_top],
-                  [w_bot, h_bot], [w - w_bot, h_bot]]
+        points = [
+            [w_top, h_top],
+            [w - w_top, h_top],
+            [w_bot, h_bot],
+            [w - w_bot, h_bot],
+        ]
 
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         frame_warp = utils.get_warp(frame_hsv, points, w, h)
@@ -31,7 +47,7 @@ def main(src=0, preview=False):
         utils.warp_helper(frame_hsv, points)
 
         base_point, hist_img = utils.get_histogram(mask, 0.5, 8)
-        curve_value = base_point - w//2
+        curve_value = base_point - w // 2
 
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
         roi = utils.region_of_interest(mask)
@@ -40,7 +56,7 @@ def main(src=0, preview=False):
 
         if preview:
             stack = np.hstack([roi, result, hist_img])
-            cv2.imshow('stack', stack)
+            cv2.imshow("stack", stack)
 
         no_lane = utils.no_lane(roi)
 
