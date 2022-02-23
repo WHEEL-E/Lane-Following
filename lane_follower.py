@@ -6,6 +6,7 @@ import utils
 
 
 def main(src=0, preview=False):
+    stop_flag = False
     w, h = 480, 360
     utils.create_trackbar(w, h)
     capture = cv2.VideoCapture(src)
@@ -61,13 +62,18 @@ def main(src=0, preview=False):
         no_lane = utils.no_lane(roi)
 
         if no_lane:
-            control.stop()
+            if not stop_flag:
+                control.stop()
+                stop_flag = True
         elif -25 < curve_value < 25 and not no_lane:
             control.forward()
+            stop_flag = False
         elif curve_value > 25 and not no_lane:
             control.right()
+            stop_flag = False
         elif curve_value < -25 and not no_lane:
             control.left()
+            stop_flag = False
 
         if cv2.waitKey(1) & 0xFF == 27:
             control.stop()
