@@ -11,7 +11,7 @@ def select_mode(mode):
     3: Autonomous driving
     """
     if mode == 0:
-        keyboard_control.main()
+        keyboard_control.main(delay=1)
     elif mode == 1:
         pass
     elif mode == 2:
