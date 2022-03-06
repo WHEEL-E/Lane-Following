@@ -20,7 +20,7 @@ def getKey(keyName):
 def main(delay):
     pygame.init()
     win = pygame.display.set_mode((100, 100))
-    stop_flag = False
+    stop_flag = True
     while True:
         if getKey("UP") or getKey("w"):
             control.forward()
