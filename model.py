@@ -1,8 +1,14 @@
 import datetime
+import os
 
+import cv2
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+shape = cv2.imread(
+    "data/training/forward/" + os.listdir("data/training/forward")[0]
+).shape
 
 train_datagen = ImageDataGenerator(
     rescale=1.0 / 255,
@@ -17,28 +23,33 @@ train_datagen = ImageDataGenerator(
 
 train_dir = "data/training"
 train_generator = train_datagen.flow_from_directory(
-    train_dir, batch_size=30, class_mode="categorical", target_size=(200, 66)
+    train_dir, batch_size=30, class_mode="categorical", target_size=(shape[0], shape[1])
 )
 
 validation_datagen = ImageDataGenerator(rescale=1.0 / 255)
 
 val_dir = "data/testing"
 validation_generator = validation_datagen.flow_from_directory(
-    val_dir, batch_size=30, class_mode="categorical", target_size=(200, 66)
+    val_dir, batch_size=30, class_mode="categorical", target_size=(shape[0], shape[1])
 )
 
 
 class EarlyStopping(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
         if logs.get("accuracy") > 0.95:
-            print("\n 95% accuracy reached")
+            print(
+                "\n95% accuracy reached in epoch {}\nStopping training 👻👻👻👻👻👻\n".format(
+                    epoch
+                )
+            )
             self.model.stop_training = True
 
 
 model = tf.keras.models.Sequential(
     [
-        keras.layers.Lambda(lambda x: x / 127.5 - 1.0, input_shape=(200, 66, 3)),
-        keras.layers.Conv2D(24, (5, 5), activation="relu", strides=(2, 2)),
+        keras.layers.Conv2D(
+            24, (5, 5), activation="relu", strides=(2, 2), input_shape=shape
+        ),
         keras.layers.Conv2D(36, (5, 5), activation="relu", strides=(2, 2)),
         keras.layers.Conv2D(48, (5, 5), activation="relu", strides=(2, 2)),
         keras.layers.Conv2D(64, (3, 3), activation="relu"),
@@ -73,7 +84,7 @@ history = model.fit(
     shuffle=1,
     callbacks=[
         EarlyStopping(),
-        tf.keras.callbacks.EarlyStopping(monitor="loss", patience=5),
+        tf.keras.callbacks.EarlyStopping(monitor="loss", patience=10),
         tensorboard_callback,
     ],
 )
