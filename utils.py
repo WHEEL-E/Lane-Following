@@ -140,7 +140,7 @@ def get_histogram(frame, percent, region):
         cv2.line(
             hist_img,
             (x, frame.shape[0]),
-            (x, frame.shape[0] - intenisty // 255 // region),
+            (x, frame.shape[0] - int(intenisty) // 255 // region),
             (0, 0, 255),
             1,
         )
