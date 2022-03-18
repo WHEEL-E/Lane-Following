@@ -10,20 +10,20 @@ port = serial.Serial(
 
 
 def forward(speed=0.5):
-    port.write(b"\w")
+    port.write(b'\w')
 
 
 def left():
-    port.write(b"\a")
+    port.write(b'\a')
 
 
 def backward(speed=0.5):
-    port.write(b"\s")
+    port.write(b'\s')
 
 
 def right():
-    port.write(b"\d")
+    port.write(b'\d')
 
 
 def stop():
-    port.write(b"\o")
+    port.write(b'\o')
