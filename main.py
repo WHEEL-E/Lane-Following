@@ -6,18 +6,15 @@ def select_mode(mode):
     """
     Select the mode of operation from mobile phone
     0: Keyboard control
-    1: Bluetooth control
-    2: Lane following
-    3: Autonomous driving
+    1: Lane following
+    2: Autonomous driving
     """
     if mode == 0:
         keyboard_control.main(delay=1)
     elif mode == 1:
-        pass
+        lane_follower.main(src=0, preview=True)
     elif mode == 2:
-        lane_follower.main(preview=True)
-    elif mode == 3:
         pass
 
 
-select_mode(2)
+select_mode(1)
