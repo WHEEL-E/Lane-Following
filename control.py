@@ -10,25 +10,25 @@ uart = serial.Serial(
     parity=serial.PARITY_NONE,
     stopbits=serial.STOPBITS_ONE,
     bytesize=serial.EIGHTBITS,
-    writeTimeout = 1.0
+    writeTimeout=1.0,
 )
 
 
 def forward(speed=0.5):
-    uart.write(b'\w')
+    uart.write(b"\w")
 
 
 def left():
-    uart.write(b'\a')
+    uart.write(b"\a")
 
 
 def backward(speed=0.5):
-    uart.write(b'\s')
+    uart.write(b"\s")
 
 
 def right():
-    uart.write(b'\d')
+    uart.write(b"\d")
 
 
 def stop():
-    uart.write(b'\o')
+    uart.write(b"\o")
