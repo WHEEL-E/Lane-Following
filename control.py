@@ -1,18 +1,29 @@
+import serial
+
+port = serial.Serial(
+    port="/dev/ttyS0",
+    baudrate=115200,
+    parity=serial.PARITY_NONE,
+    stopbits=serial.STOPBITS_ONE,
+    bytesize=serial.EIGHTBITS,
+)
+
+
 def forward(speed=0.5):
-    print("w")
+    port.write(b"\w")
 
 
-def left(speed=0.5):
-    print("a")
+def left():
+    port.write(b"\a")
 
 
 def backward(speed=0.5):
-    print("s")
+    port.write(b"\s")
 
 
-def right(speed=0.5):
-    print("d")
+def right():
+    port.write(b"\d")
 
 
 def stop():
-    print("o")
+    port.write(b"\o")
