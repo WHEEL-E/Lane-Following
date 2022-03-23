@@ -1,37 +1,24 @@
 import time
 
-import pygame
+import keyboard
 
 import control
 
 
-def getKey(keyName):
-    ret = False
-    for event in pygame.event.get():
-        pass
-    keyInput = pygame.key.get_pressed()
-    myKey = getattr(pygame, "K_{}".format(keyName))
-    if keyInput[myKey]:
-        ret = True
-    pygame.display.update()
-    return ret
-
-
 def main(delay):
-    pygame.init()
-    win = pygame.display.set_mode((100, 100))
     stop_flag = True
+
     while True:
-        if getKey("UP") or getKey("w"):
+        if keyboard.is_pressed("w") or keyboard.is_pressed("up"):
             control.forward()
             stop_flag = False
-        elif getKey("LEFT") or getKey("a"):
+        elif keyboard.is_pressed("a") or keyboard.is_pressed("left"):
             control.left()
             stop_flag = False
-        elif getKey("DOWN") or getKey("s"):
+        elif keyboard.is_pressed("s") or keyboard.is_pressed("down"):
             control.backward()
             stop_flag = False
-        elif getKey("RIGHT") or getKey("d"):
+        elif keyboard.is_pressed("d") or keyboard.is_pressed("right"):
             control.right()
             stop_flag = False
         else:
