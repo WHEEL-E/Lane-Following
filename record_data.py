@@ -5,6 +5,7 @@ import time
 import cv2
 import pygame
 
+import camera
 import control
 import keyboard_control
 
@@ -19,16 +20,15 @@ def take_snapshot(frame, path):
     cv2.imwrite(os.path.join(path, file_name), frame)
 
 
-def record_data(src, delay):
+def main(delay):
     """
     Record data and save it
     """
     pygame.init()
     win = pygame.display.set_mode((100, 100))
-    cap = cv2.VideoCapture(src)
     stop_flag = True
     while True:
-        ret, frame = cap.read()
+        frame = camera.capture()
         if keyboard_control.getKey("UP") or keyboard_control.getKey("w"):
             control.forward()
             take_snapshot(frame, "data/raw/forward")
@@ -55,6 +55,3 @@ def record_data(src, delay):
                 stop_flag = True
 
         time.sleep(delay)
-
-
-record_data(src=0, delay=0.5)
