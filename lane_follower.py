@@ -1,24 +1,39 @@
 import cv2
 import numpy as np
 
+import camera
 import control
 import utils
 
 
-def main(src=0, preview=False):
+def take_action(no_lane, curve_value, stop_flag, min_curve) -> bool:
+    """
+    Take action based on the result of the lane detection
+    """
+    if no_lane:
+        if not stop_flag:
+            control.stop()
+            stop_flag = True
+    elif -min_curve < curve_value < min_curve and not no_lane:
+        control.forward()
+        stop_flag = False
+    elif curve_value > min_curve and not no_lane:
+        control.right()
+        stop_flag = False
+    elif curve_value < -min_curve and not no_lane:
+        control.left()
+        stop_flag = False
+
+    return stop_flag
+
+
+def main(preview: bool = False, intialize: bool = False, flip: bool = True):
     stop_flag = False
     w, h = 480, 360
-    utils.create_trackbar(w, h)
-    capture = cv2.VideoCapture(src)
 
-    while True:
-        ret, frame = capture.read()
-        if ret == False:
-            capture = cv2.VideoCapture(src)
-            ret, frame = capture.read()
-
-        frame = cv2.resize(frame, (w, h))
-
+    if intialize:
+        utils.create_trackbar(w, h)
+    else:
         (
             h_min,
             h_max,
@@ -30,7 +45,28 @@ def main(src=0, preview=False):
             w_bot,
             h_top,
             h_bot,
-        ) = utils.get_trackbar()
+        ) = utils.load_values()
+
+    while True:
+        frame = camera.capture()
+        frame = cv2.resize(frame, (w, h))
+
+        if flip:
+            frame = cv2.flip(frame, 1)
+
+        if intialize:
+            (
+                h_min,
+                h_max,
+                s_min,
+                s_max,
+                v_min,
+                v_max,
+                w_top,
+                w_bot,
+                h_top,
+                h_bot,
+            ) = utils.get_trackbar()
 
         lower = np.array([h_min, s_min, v_min])
         upper = np.array([h_max, s_max, v_max])
@@ -42,42 +78,28 @@ def main(src=0, preview=False):
         ]
 
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        frame_warp = utils.get_warp(frame_hsv, points, w, h)
+        frame_warp = camera.get_warp(frame_hsv, points, w, h)
         mask = cv2.inRange(frame_warp, lower, upper)
         result = cv2.bitwise_and(frame_warp, frame_warp, mask=mask)
-        utils.warp_helper(frame_hsv, points)
+        camera.warp_helper(frame_hsv, points)
 
         base_point, hist_img = utils.get_histogram(mask, 0.5, 8)
         curve_value = base_point - w // 2
 
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        roi = utils.region_of_interest(mask)
 
         result = cv2.cvtColor(result, cv2.COLOR_HSV2BGR)
 
         if preview:
-            stack = np.hstack([roi, result, hist_img])
+            stack = np.hstack([mask, result, hist_img])
             cv2.imshow("stack", stack)
 
-        no_lane = utils.no_lane(roi)
+        no_lane = utils.no_lane(mask)
 
-        if no_lane:
-            if not stop_flag:
-                control.stop()
-                stop_flag = True
-        elif -25 < curve_value < 25 and not no_lane:
-            control.forward()
-            stop_flag = False
-        elif curve_value > 25 and not no_lane:
-            control.right()
-            stop_flag = False
-        elif curve_value < -25 and not no_lane:
-            control.left()
-            stop_flag = False
+        stop_flag = take_action(no_lane, curve_value, stop_flag, min_curve=25)
 
         if cv2.waitKey(1) & 0xFF == 27:
             control.stop()
             break
 
-    capture.release()
     cv2.destroyAllWindows()
