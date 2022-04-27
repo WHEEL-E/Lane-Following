@@ -88,4 +88,11 @@ history = model.fit(
     ],
 )
 
-keras.models.save_model(model, "models/" + model_name, save_format="h5")
+keras_file = "models/h5/" + model_name + ".h5"
+tflite_file = "models/tflite/" + model_name + ".tflite"
+
+keras.models.save_model(model, keras_file, save_format="h5")
+
+converter = tf.lite.TFLiteConverter.from_keras_model(model)
+tflite_model = converter.convert()
+open(tflite_file, "wb").write(tflite_model)
