@@ -6,7 +6,9 @@ import control
 import utils
 
 
-def take_action(no_lane, curve_value, stop_flag, min_curve) -> bool:
+def take_action(
+    no_lane: bool, curve_value: int, stop_flag: bool, min_curve: float
+) -> bool:
     """
     Take action based on the result of the lane detection
     """
@@ -29,10 +31,10 @@ def take_action(no_lane, curve_value, stop_flag, min_curve) -> bool:
 
 def main(preview: bool = False, intialize: bool = False, flip: bool = True):
     stop_flag = False
-    w, h = 480, 360
+    camera.set_stream(camera.width, camera.height, camera.fps)
 
     if intialize:
-        utils.create_trackbar(w, h)
+        utils.create_trackbar(camera.width, camera.height)
     else:
         (
             h_min,
@@ -49,7 +51,7 @@ def main(preview: bool = False, intialize: bool = False, flip: bool = True):
 
     while True:
         frame = camera.capture()
-        frame = cv2.resize(frame, (w, h))
+        frame = camera.resize(frame, camera.width, camera.height)
 
         if flip:
             frame = cv2.flip(frame, 1)
@@ -72,19 +74,19 @@ def main(preview: bool = False, intialize: bool = False, flip: bool = True):
         upper = np.array([h_max, s_max, v_max])
         points = [
             [w_top, h_top],
-            [w - w_top, h_top],
+            [camera.width - w_top, h_top],
             [w_bot, h_bot],
-            [w - w_bot, h_bot],
+            [camera.width - w_bot, h_bot],
         ]
 
         frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        frame_warp = camera.get_warp(frame_hsv, points, w, h)
+        frame_warp = camera.get_warp(frame_hsv, points, camera.width, camera.height)
         mask = cv2.inRange(frame_warp, lower, upper)
         result = cv2.bitwise_and(frame_warp, frame_warp, mask=mask)
         camera.warp_helper(frame_hsv, points)
 
         base_point, hist_img = utils.get_histogram(mask, 0.5, 8)
-        curve_value = base_point - w // 2
+        curve_value = base_point - camera.width // 2
 
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
@@ -92,14 +94,12 @@ def main(preview: bool = False, intialize: bool = False, flip: bool = True):
 
         if preview:
             stack = np.hstack([mask, result, hist_img])
-            cv2.imshow("stack", stack)
+            camera.preview(stack, fps=True)
 
         no_lane = utils.no_lane(mask)
 
-        stop_flag = take_action(no_lane, curve_value, stop_flag, min_curve=25)
+        stop_flag = take_action(no_lane, curve_value, stop_flag, min_curve=25.0)
 
-        if cv2.waitKey(1) & 0xFF == 27:
-            control.stop()
-            break
 
-    cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main(preview=True, intialize=True, flip=True)
