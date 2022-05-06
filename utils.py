@@ -50,7 +50,7 @@ def empty(x):
     pass
 
 
-def create_trackbar(w, h):
+def create_trackbar(width, height):
     """
     Create trackbars for setting parameters
     """
@@ -63,10 +63,10 @@ def create_trackbar(w, h):
     cv2.createTrackbar("s_max", "Setting parameters", s_max, 255, empty)
     cv2.createTrackbar("v_min", "Setting parameters", v_min, 255, empty)
     cv2.createTrackbar("v_max", "Setting parameters", v_max, 255, empty)
-    cv2.createTrackbar("w_top", "Setting parameters", w_top, w // 2, empty)
-    cv2.createTrackbar("h_top", "Setting parameters", h_top, h, empty)
-    cv2.createTrackbar("w_bot", "Setting parameters", w_bot, w // 2, empty)
-    cv2.createTrackbar("h_bot", "Setting parameters", h_bot, h, empty)
+    cv2.createTrackbar("w_top", "Setting parameters", w_top, width // 2, empty)
+    cv2.createTrackbar("h_top", "Setting parameters", h_top, height, empty)
+    cv2.createTrackbar("w_bot", "Setting parameters", w_bot, width // 2, empty)
+    cv2.createTrackbar("h_bot", "Setting parameters", h_bot, height, empty)
 
 
 def get_trackbar():
