@@ -20,15 +20,19 @@ def take_snapshot(frame, path):
     cv2.imwrite(os.path.join(path, file_name), frame)
 
 
-def main(delay):
+def main(delay: float = 0.0, preview: bool = False):
     """
-    Record data and save it
+    Control the wheelchair using the keyboard,
+    and collect data for training the model.
     """
     pygame.init()
     win = pygame.display.set_mode((100, 100))
     stop_flag = True
     while True:
         frame = camera.capture()
+        if preview:
+            camera.preview(frame, fps=True)
+
         if keyboard_control.getKey("UP") or keyboard_control.getKey("w"):
             control.forward()
             take_snapshot(frame, "data/raw/forward")
@@ -47,11 +51,19 @@ def main(delay):
         elif keyboard_control.getKey("SPACE"):
             if not stop_flag:
                 control.stop()
+                stop_flag = True
             take_snapshot(frame, "data/raw/stop")
+        elif keyboard_control.getKey("ESCAPE"):
+            control.stop()
+            pygame.quit()
+            return
         else:
             if not stop_flag:
                 control.stop()
-                take_snapshot(frame, "data/raw/stop")
                 stop_flag = True
 
         time.sleep(delay)
+
+
+if __name__ == "__main__":
+    main(preview=True)
