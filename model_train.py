@@ -4,13 +4,12 @@ import os
 import cv2
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 shape = cv2.imread(
     "data/training/forward/" + os.listdir("data/training/forward")[0]
 ).shape
 
-train_datagen = ImageDataGenerator(
+train_datagen = keras.preprocessing.image.ImageDataGenerator(
     rescale=1.0 / 255,
     rotation_range=40,
     width_shift_range=0.1,
@@ -25,7 +24,7 @@ train_generator = train_datagen.flow_from_directory(
     train_dir, batch_size=30, class_mode="categorical", target_size=(shape[0], shape[1])
 )
 
-validation_datagen = ImageDataGenerator(rescale=1.0 / 255)
+validation_datagen = keras.preprocessing.image.ImageDataGenerator(rescale=1.0 / 255)
 
 val_dir = "data/testing"
 validation_generator = validation_datagen.flow_from_directory(
@@ -68,7 +67,7 @@ model.compile(
     metrics=["accuracy"],
 )
 
-model_name = "Autonomus-model-" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+model_name = "Autonomus-model-" + datetime.datetime.now().strftime("%m%d-%H%M")
 log_dir = "logs/" + model_name
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir)
 
@@ -76,7 +75,7 @@ tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir)
 history = model.fit(
     train_generator,
     steps_per_epoch=1,
-    epochs=20,
+    epochs=200,
     validation_data=validation_generator,
     validation_steps=1,
     verbose=1,
