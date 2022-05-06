@@ -1,8 +1,9 @@
 import sys
 
+import collect_data
+import control
 import keyboard_control
 import lane_follower
-import record_data
 
 
 def main():
@@ -12,27 +13,29 @@ def main():
     1: Mobile control
     2: Lane following
     3: Autonomous driving
-    4: Record data
+    4: Collect training data
     """
+    control.main()
+
     if len(sys.argv) != 2:
         sys.exit(
-            "Usage: python3 main.py {mode}\n 0: Keyboard control\n 1: Mobile control\n 2: Lane following\n 3: Autonomous driving\n 4: Record data"
+            "\n Usage: python3 main.py {mode}\n 0: Keyboard control\n 1: Mobile control\n 2: Lane following\n 3: Autonomous driving\n 4: Collect training data\n"
         )
     mode: str = sys.argv[1]
 
     if mode == "0":
-        keyboard_control.main(0.2)
+        keyboard_control.main(delay=0.25)
     elif mode == "1":
         pass
     elif mode == "2":
-        lane_follower.main(preview=True, intialize=True)
+        lane_follower.main()
     elif mode == "3":
         pass
     elif mode == "4":
-        record_data.main(delay=0.5)
+        collect_data.main(delay=0.25)
     else:
         sys.exit(
-            "Usage: python3 main.py {mode}\n 0: Keyboard control\n 1: Mobile control\n 2: Lane following\n 3: Autonomous driving\n 4: Record data"
+            "\n Usage: python3 main.py {mode}\n 0: Keyboard control\n 1: Mobile control\n 2: Lane following\n 3: Autonomous driving\n 4: Collect training data\n"
         )
 
 
