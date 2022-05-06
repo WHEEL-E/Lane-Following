@@ -1,7 +1,31 @@
+import time
+
 import cv2
 import numpy as np
 
+import control
+
+
+class KeyboardInterrupt(Exception):
+    """
+    Keyboard interrupt exception
+    """
+
+    pass
+
+
+prev_frame_time: float = 0
+width, height, fps = 480, 360, 30
 cap = cv2.VideoCapture(0)
+
+
+def set_stream(width, height, fps):
+    """
+    configure the capture stream
+    """
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+    cap.set(cv2.CAP_PROP_FPS, fps)
 
 
 def capture():
@@ -10,6 +34,58 @@ def capture():
     """
     ret, frame = cap.read()
     return frame
+
+
+def no_light(frame):
+    """
+    Check if there is no light in the frame
+    """
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+    return cv2.countNonZero(thresh)
+
+
+def resize(frame, width, height):
+    """
+    Resize the frame
+    """
+    return cv2.resize(frame, (width, height))
+
+
+def convert_YUV(frame):
+    """
+    Convert the frame to YUV color space.
+    """
+    return cv2.cvtColor(frame, cv2.COLOR_RGB2YUV)
+
+
+def preview(frame, fps: bool):
+    """
+    Preview the frame with fps
+    """
+    if fps:
+        global prev_frame_time
+        new_frame_time = time.time()
+        frame_rate = 1 / (new_frame_time - prev_frame_time)
+        prev_frame_time = new_frame_time
+        frame_rate = int(frame_rate)
+        cv2.putText(
+            frame,
+            str(frame_rate),
+            (7, 70),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            (100, 255, 0),
+            3,
+            cv2.LINE_AA,
+        )
+
+    cv2.imshow("Preview", frame)
+    if cv2.waitKey(1) & 0xFF == 27:
+        control.stop()
+        cap.release()
+        cv2.destroyAllWindows()
+        raise KeyboardInterrupt
 
 
 def get_warp(frame, points, w, h):
