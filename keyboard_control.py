@@ -35,8 +35,15 @@ def main(delay):
         elif getKey("RIGHT") or getKey("d"):
             control.right()
             stop_flag = False
+        elif getKey("ESCAPE"):
+            pygame.quit()
+            return
         else:
             if not stop_flag:
                 control.stop()
                 stop_flag = True
         time.sleep(delay)
+
+
+if __name__ == "__main__":
+    main(0.25)
