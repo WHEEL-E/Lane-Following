@@ -33,14 +33,13 @@ def load_values():
     )
 
 
-def save_values(values):
+def save_values(values: str):
     """
     Save trackbar values to file
     """
-    file = open("trackbars.txt", "w")
-    for value in values:
-        file.write(str(value) + "\n")
-    file.close()
+    with open("trackbars.txt", "w") as file:
+        for value in values:
+            file.write(f"{value}\n")
 
 
 def empty(x):
