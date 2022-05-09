@@ -1,9 +1,10 @@
-import time
-
 import cv2
 import numpy as np
 
 import control
+
+width, height, fps = 480, 360, 30
+cap = cv2.VideoCapture(0)
 
 
 class KeyboardInterrupt(Exception):
@@ -12,11 +13,6 @@ class KeyboardInterrupt(Exception):
     """
 
     pass
-
-
-prev_frame_time: float = 0
-width, height, fps = 480, 360, 30
-cap = cv2.VideoCapture(0)
 
 
 def set_stream(width, height, fps):
@@ -45,11 +41,18 @@ def no_light(frame):
     return cv2.countNonZero(thresh)
 
 
-def resize(frame, width, height):
+def resize(frame, width: int, height: int):
     """
     Resize the frame
     """
     return cv2.resize(frame, (width, height))
+
+
+def flip(frame):
+    """
+    Flip the frame horizontally
+    """
+    return cv2.flip(frame, 1)
 
 
 def convert_YUV(frame):
@@ -59,27 +62,10 @@ def convert_YUV(frame):
     return cv2.cvtColor(frame, cv2.COLOR_RGB2YUV)
 
 
-def preview(frame, fps: bool):
+def preview(frame):
     """
     Preview the frame with fps
     """
-    if fps:
-        global prev_frame_time
-        new_frame_time = time.time()
-        frame_rate = 1 / (new_frame_time - prev_frame_time)
-        prev_frame_time = new_frame_time
-        frame_rate = int(frame_rate)
-        cv2.putText(
-            frame,
-            str(frame_rate),
-            (7, 70),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1,
-            (100, 255, 0),
-            3,
-            cv2.LINE_AA,
-        )
-
     cv2.imshow("Preview", frame)
     if cv2.waitKey(1) & 0xFF == 27:
         control.stop()
