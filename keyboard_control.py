@@ -2,6 +2,7 @@ import time
 
 import pygame
 
+import camera
 import control
 
 
@@ -19,31 +20,34 @@ def getKey(keyName):
 
 def main(delay):
     pygame.init()
-    win = pygame.display.set_mode((100, 100))
+    pygame.display.set_mode((100, 100))
     stop_flag = True
 
-    while True:
-        if getKey("UP") or getKey("w"):
-            control.forward()
-            stop_flag = False
-        elif getKey("LEFT") or getKey("a"):
-            control.left()
-            stop_flag = False
-        elif getKey("DOWN") or getKey("s"):
-            control.backward()
-            stop_flag = False
-        elif getKey("RIGHT") or getKey("d"):
-            control.right()
-            stop_flag = False
-        elif getKey("ESCAPE"):
-            pygame.quit()
-            return
-        else:
-            if not stop_flag:
-                control.stop()
-                stop_flag = True
-        time.sleep(delay)
+    try:
+        while True:
+            if getKey("UP") or getKey("w"):
+                control.forward()
+                stop_flag = False
+            elif getKey("LEFT") or getKey("a"):
+                control.left()
+                stop_flag = False
+            elif getKey("DOWN") or getKey("s"):
+                control.backward()
+                stop_flag = False
+            elif getKey("RIGHT") or getKey("d"):
+                control.right()
+                stop_flag = False
+            else:
+                if not stop_flag:
+                    control.stop()
+                    stop_flag = True
+            time.sleep(delay)
+
+    except KeyboardInterrupt:
+        control.stop()
+        camera.cap.release()
+        pygame.quit()
 
 
 if __name__ == "__main__":
-    main(0.25)
+    main(0.2)
