@@ -67,7 +67,7 @@ model.compile(
     metrics=["accuracy"],
 )
 
-model_name = "Autonomus-model-" + datetime.datetime.now().strftime("%m%d-%H%M")
+model_name = "Autonomus-model-{}".format(datetime.datetime.now().strftime("%m%d-%H%M"))
 log_dir = "logs/" + model_name
 tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir)
 
@@ -87,11 +87,12 @@ history = model.fit(
     ],
 )
 
-keras_file = "models/h5/" + model_name + ".h5"
-tflite_file = "models/tflite/" + model_name + ".tflite"
+keras_file = f"models/h5/{model_name}.h5"
+tflite_file = f"models/tflite/{model_name}.tflite"
 
 keras.models.save_model(model, keras_file, save_format="h5")
 
 converter = tf.lite.TFLiteConverter.from_keras_model(model)
 tflite_model = converter.convert()
-open(tflite_file, "wb").write(tflite_model)
+with open(tflite_file, "wb") as f:
+    f.write(tflite_model)
