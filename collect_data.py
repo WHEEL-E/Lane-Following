@@ -33,7 +33,7 @@ def main(delay: float = 0.0, preview: bool = False):
         while True:
             frame = camera.capture()
             if preview:
-                camera.preview(frame, fps=True)
+                camera.preview(frame)
 
             if keyboard_control.getKey("UP") or keyboard_control.getKey("w"):
                 control.forward()
