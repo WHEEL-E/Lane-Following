@@ -69,4 +69,5 @@ def main(delay: float = 0.0, preview: bool = False):
 
 
 if __name__ == "__main__":
+    control.main()
     main(delay=0.2, preview=True)

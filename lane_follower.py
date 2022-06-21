@@ -109,4 +109,5 @@ def main(preview: bool = False, intialize: bool = False, flip: bool = True):
 
 
 if __name__ == "__main__":
+    control.main()
     main(preview=True, intialize=True, flip=True)
