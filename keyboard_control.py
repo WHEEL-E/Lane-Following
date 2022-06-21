@@ -50,4 +50,5 @@ def main(delay):
 
 
 if __name__ == "__main__":
+    control.main()
     main(0.2)
