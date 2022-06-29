@@ -2,7 +2,6 @@ import time
 
 import pygame
 
-import camera
 import control
 
 
@@ -45,7 +44,6 @@ def main(delay):
 
     except KeyboardInterrupt:
         control.stop()
-        camera.cap.release()
         pygame.quit()
 
 
