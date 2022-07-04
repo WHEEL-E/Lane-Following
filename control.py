@@ -2,7 +2,10 @@
 For more information on the serial module, see: https://pythonhosted.org/pyserial/index.html
 """
 
+import time
+
 import serial
+
 
 def main() -> None:
     """
@@ -36,4 +39,6 @@ def right():
 
 
 def stop():
+    uart.write(b"o")
+    time.sleep(0.25)
     uart.write(b"o")
