@@ -19,16 +19,16 @@ def main() -> None:
     )
 
 
-def forward(speed=0.5):
-    uart.write(b"5w")
+def forward():
+    uart.write(b"w")
 
 
 def left():
     uart.write(b"a")
 
 
-def backward(speed=0.5):
-    uart.write(b"5s")
+def backward():
+    uart.write(b"s")
 
 
 def right():
