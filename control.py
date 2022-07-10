@@ -40,5 +40,5 @@ def right():
 
 def stop():
     uart.write(b"o")
-    time.sleep(0.25)
+    time.sleep(0.1)
     uart.write(b"o")
