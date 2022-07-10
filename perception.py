@@ -5,8 +5,8 @@ import landmark_ocr
 import lane_follower
 
 class Thread(threading.Thread):
-    """Thread class with a stop() method. The thread itself has to check
-    regularly for the stopped() condition."""
+    """Thread class with a kill() method. The thread itself has to check
+    regularly for the is_killed() condition."""
 
     def __init__(self, *args, **kwargs):
         super(Thread, self).__init__(*args, **kwargs)
