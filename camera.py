@@ -29,6 +29,8 @@ def capture():
     Capture the frame
     """
     ret, frame = cap.read()
+    frame = cv2.flip(frame, 0)
+    frame = cv2.flip(frame, 1)
     return frame
 
 
