@@ -8,31 +8,30 @@ import utils
 
 
 def take_action(
-    no_lane: bool, curve_value: int, stop_flag: bool, min_curve: float
+    no_lane: bool, curve_value: int, last_action: bool, min_curve: float
 ) -> bool:
     """
     Take action based on the result of the lane detection
     """
-    if no_lane:
-        if not stop_flag:
-            control.stop()
-            stop_flag = True
-    elif -min_curve < curve_value < min_curve and not no_lane:
+    if no_lane and last_action != "o":
+        control.stop()
+        last_action = "o"
+    elif -min_curve < curve_value < min_curve and not no_lane and last_action != "w":
         control.forward()
-        stop_flag = False
-    elif curve_value > min_curve and not no_lane:
+        last_action = "w"
+    elif curve_value > min_curve and not no_lane and last_action != "d":
         control.right()
-        stop_flag = False
-    elif curve_value < -min_curve and not no_lane:
+        last_action = "d"
+    elif curve_value < -min_curve and not no_lane and last_action != "a":
         control.left()
-        stop_flag = False
+        last_action = "a"
 
-    return stop_flag
+    return last_action
 
 
 @profiling.profile
-def main(preview: bool = False, intialize: bool = False, flip: bool = True):
-    stop_flag = False
+def main(preview: bool = 0, intialize: bool = False):
+    last_action = "o"
 
     if intialize:
         utils.create_trackbar(camera.width, camera.height)
@@ -54,9 +53,6 @@ def main(preview: bool = False, intialize: bool = False, flip: bool = True):
         while True:
             frame = camera.capture()
             frame = camera.resize(frame, camera.width, camera.height)
-
-            if flip:
-                frame = cv2.flip(frame, 1)
 
             if intialize:
                 (
@@ -85,22 +81,22 @@ def main(preview: bool = False, intialize: bool = False, flip: bool = True):
             frame_warp = camera.get_warp(frame_hsv, points, camera.width, camera.height)
             mask = cv2.inRange(frame_warp, lower, upper)
             result = cv2.bitwise_and(frame_warp, frame_warp, mask=mask)
-            camera.warp_helper(frame_hsv, points)
+            camera.warp_helper(result, points)
 
             base_point, hist_img = utils.get_histogram(mask, 0.5, 8)
             curve_value = base_point - camera.width // 2
 
-            mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-
-            result = cv2.cvtColor(result, cv2.COLOR_HSV2BGR)
-
-            if preview:
-                stack = np.hstack([mask, result, hist_img])
-                camera.preview(stack)
-
             no_lane = utils.no_lane(mask)
 
-            stop_flag = take_action(no_lane, curve_value, stop_flag, min_curve=25.0)
+            last_action = take_action(
+                no_lane, curve_value, last_action, min_curve=100.0
+            )
+
+            if preview:
+                mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+                result = cv2.cvtColor(result, cv2.COLOR_HSV2BGR)
+                stack = np.hstack([mask, result, hist_img])
+                camera.preview(stack)
 
     except KeyboardInterrupt:
         control.stop()
@@ -110,4 +106,4 @@ def main(preview: bool = False, intialize: bool = False, flip: bool = True):
 
 if __name__ == "__main__":
     control.main()
-    main(preview=True, intialize=True, flip=True)
+    main(preview=True, intialize=True)
