@@ -12,8 +12,6 @@ def main(destination: str):
     if os.name == "nt":
         pytesseract.pytesseract.tesseract_cmd = "C:\\src\\Tesseract-OCR\\tesseract.exe"
 
-    control.main()
-
     destination = destination.lower().replace(" ", "")
 
     while True:
@@ -47,6 +45,8 @@ def main(destination: str):
 
 
 def take_action(landmark: str, destination: str):
+    control.main()
+    
     zone1 = ["livingroom", "kitchen", "diningroom"]
     zone2 = ["bedroom1", "bedroom2", "bathroom"]
 

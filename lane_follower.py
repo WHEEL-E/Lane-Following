@@ -13,6 +13,8 @@ def take_action(
     """
     Take action based on the result of the lane detection
     """
+    control.main()
+
     if no_lane and last_action != "o":
         control.stop()
         last_action = "o"
