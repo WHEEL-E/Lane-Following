@@ -32,15 +32,6 @@ def capture():
     return frame
 
 
-def no_light(frame):
-    """
-    Check if there is no light in the frame
-    """
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
-    return cv2.countNonZero(thresh)
-
-
 def resize(frame, width: int, height: int):
     """
     Resize the frame
