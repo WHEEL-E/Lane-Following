@@ -3,11 +3,11 @@ import os
 import time
 
 import cv2
+import keyboard_control_gui
 import pygame
 
 import camera
 import control
-import keyboard_control
 
 
 def take_snapshot(frame, path):
@@ -35,25 +35,23 @@ def main(delay: float = 0.0, preview: bool = False):
             if preview:
                 camera.preview(frame)
 
-            if keyboard_control.getKey("UP") or keyboard_control.getKey("w"):
+            if keyboard_control_gui.getKey("UP") or keyboard_control_gui.getKey("w"):
                 control.forward()
                 take_snapshot(frame, "data/raw/forward")
                 stop_flag = False
-            elif keyboard_control.getKey("LEFT") or keyboard_control.getKey("a"):
+            elif keyboard_control_gui.getKey("LEFT") or keyboard_control_gui.getKey("a"):
                 control.left()
                 take_snapshot(frame, "data/raw/left")
                 stop_flag = False
-            elif keyboard_control.getKey("DOWN") or keyboard_control.getKey("s"):
+            elif keyboard_control_gui.getKey("DOWN") or keyboard_control_gui.getKey("s"):
                 control.backward()
                 stop_flag = False
-            elif keyboard_control.getKey("RIGHT") or keyboard_control.getKey("d"):
+            elif keyboard_control_gui.getKey("RIGHT") or keyboard_control_gui.getKey("d"):
                 control.right()
                 take_snapshot(frame, "data/raw/right")
                 stop_flag = False
-            elif keyboard_control.getKey("SPACE"):
-                if not stop_flag:
-                    control.stop()
-                    stop_flag = True
+            elif keyboard_control_gui.getKey("SPACE") or keyboard_control_gui.getKey("o"):
+                control.stop()
                 take_snapshot(frame, "data/raw/stop")
             else:
                 if not stop_flag:
@@ -70,4 +68,4 @@ def main(delay: float = 0.0, preview: bool = False):
 
 if __name__ == "__main__":
     control.main()
-    main(delay=0.2, preview=True)
+    main(delay=0.1, preview=True)
