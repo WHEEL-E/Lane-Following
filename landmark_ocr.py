@@ -12,6 +12,8 @@ def main(destination: str):
     if os.name == "nt":
         pytesseract.pytesseract.tesseract_cmd = "C:\\src\\Tesseract-OCR\\tesseract.exe"
 
+    control.main()
+
     destination = destination.lower().replace(" ", "")
 
     while True:
